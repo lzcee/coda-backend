@@ -8,6 +8,18 @@ export class User {
   @Column()
   name: string;
 
+  @Column()
+  email: string;
+
+  @Column()
+  password: string;
+
+  @Column({ nullable: true })
+  biography?: string;
+
+  @Column({ nullable: true })
+  photo?: string;
+
   @Column({ default: true })
   isActive: boolean;
 }
