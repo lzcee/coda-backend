@@ -20,7 +20,10 @@ export class UsersService {
         HttpStatus.BAD_REQUEST,
       );
     }
-    const newUser = await this.usersRepository.save({ ...createUserDto });
+    const newUser = this.usersRepository.create(createUserDto);
+    await newUser.save();
+
+    delete newUser.password;
     return newUser;
   }
 
@@ -30,11 +33,13 @@ export class UsersService {
 
   async findOne(id: number): Promise<User> {
     const user = await this.usersRepository.findOne({ id });
+    delete user.password;
     return user;
   }
 
   async findByEmail(email: string): Promise<User> {
     const user = await this.usersRepository.findOne({ email });
+    delete user.password;
     return user;
   }
 
