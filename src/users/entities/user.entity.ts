@@ -27,8 +27,20 @@ export class User extends BaseEntity {
   @Column({ nullable: true })
   photo?: string;
 
-  @Column({ default: true })
-  isActive: boolean;
+  @Column({ nullable: true })
+  phone?: string;
+
+  @Column({ nullable: true })
+  potfolio?: string;
+
+  @Column({ nullable: true })
+  area?: string;
+
+  @Column('text', { nullable: true, array: true })
+  programmingLanguage?: string[];
+
+  @Column('text', { nullable: true, array: true })
+  softwares?: string[];
 
   @BeforeInsert()
   async hashPassword() {

@@ -8,10 +8,12 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { SearchUserDto } from './dto/search-user.dto';
 
 @Controller('users')
 export class UsersController {
@@ -22,9 +24,14 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
+  @Get()
+  findAll(@Query() searchUserDto: SearchUserDto) {
+    return this.usersService.findAll(searchUserDto);
+  }
+
   @UseGuards(JwtAuthGuard)
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: number) {
     return this.usersService.findOne(+id);
   }
 

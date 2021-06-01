@@ -4,6 +4,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
+import { SearchUserDto } from './dto/search-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -27,12 +28,15 @@ export class UsersService {
     return newUser;
   }
 
-  findAll() {
-    return `This action returns all users`;
+  async findAll(searchUserDto: SearchUserDto): Promise<any> {
+    return searchUserDto.limit;
   }
 
   async findOne(id: number): Promise<User> {
     const user = await this.usersRepository.findOne({ id });
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+    }
     delete user.password;
     return user;
   }
@@ -42,8 +46,19 @@ export class UsersService {
     return user;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
+    const user = await this.findOne(id);
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+    }
+
+    delete user.password;
+
+    await this.usersRepository.update(user.id, updateUserDto).catch((error) => {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    });
+
+    return Object.assign(user, updateUserDto);
   }
 
   remove(id: number) {
