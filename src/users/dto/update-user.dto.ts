@@ -1,11 +1,4 @@
-import {
-  IsArray,
-  IsEmail,
-  IsOptional,
-  IsString,
-  IsUrl,
-  MinLength,
-} from 'class-validator';
+import { IsArray, IsEmail, IsOptional, IsString, IsUrl } from 'class-validator';
 
 export class UpdateUserDto {
   @IsOptional()
@@ -33,15 +26,15 @@ export class UpdateUserDto {
   phone?: string;
 
   @IsOptional()
-  @IsUrl()
-  potfolio?: string;
+  @IsString()
+  portfolio?: string;
 
   @IsOptional()
   area?: string;
 
   @IsOptional()
   @IsArray()
-  programmingLanguage?: string[];
+  programmingLanguages?: string[];
 
   @IsOptional()
   @IsArray()

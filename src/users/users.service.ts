@@ -28,8 +28,13 @@ export class UsersService {
     return newUser;
   }
 
-  async findAll(searchUserDto: SearchUserDto): Promise<any> {
-    return searchUserDto.limit;
+  async findAll(searchUserDto: SearchUserDto): Promise<User[]> {
+    const users = await this.usersRepository.find({
+      select: ['name', 'email', 'biography', 'photo'],
+      where: searchUserDto,
+    });
+
+    return users;
   }
 
   async findOne(id: number): Promise<User> {

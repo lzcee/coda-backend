@@ -31,13 +31,13 @@ export class User extends BaseEntity {
   phone?: string;
 
   @Column({ nullable: true })
-  potfolio?: string;
+  portfolio?: string;
 
   @Column({ nullable: true })
   area?: string;
 
   @Column('text', { nullable: true, array: true })
-  programmingLanguage?: string[];
+  programmingLanguages?: string[];
 
   @Column('text', { nullable: true, array: true })
   softwares?: string[];
