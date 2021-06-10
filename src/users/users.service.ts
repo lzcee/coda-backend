@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { Repository } from 'typeorm';
+import { ILike, Like, Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { SearchUserDto } from './dto/search-user.dto';
 
@@ -30,8 +30,16 @@ export class UsersService {
 
   async findAll(searchUserDto: SearchUserDto): Promise<User[]> {
     const users = await this.usersRepository.find({
-      select: ['name', 'email', 'biography', 'photo'],
-      where: searchUserDto,
+      select: ['id', 'name', 'biography', 'area', 'photo'],
+      where:
+        searchUserDto && Object.keys(searchUserDto).length !== 0
+          ? {
+              name: ILike(`%${searchUserDto.name}%`),
+              area: searchUserDto.area,
+              programmingLanguages: searchUserDto.programmingLanguage,
+              softwares: searchUserDto.softwares,
+            }
+          : searchUserDto,
     });
 
     return users;
