@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ILike, Like, Repository } from 'typeorm';
+import { ILike, Like, Not, Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { SearchUserDto } from './dto/search-user.dto';
 
@@ -29,18 +29,41 @@ export class UsersService {
   }
 
   async findAll(searchUserDto: SearchUserDto): Promise<User[]> {
-    const users = await this.usersRepository.find({
-      select: ['id', 'name', 'biography', 'area', 'photo'],
-      where:
-        searchUserDto && Object.keys(searchUserDto).length !== 0
-          ? {
-              name: ILike(`%${searchUserDto.name}%`),
-              area: searchUserDto.area,
-              programmingLanguages: searchUserDto.programmingLanguage,
-              softwares: searchUserDto.softwares,
-            }
-          : searchUserDto,
-    });
+    const query = this.usersRepository
+      .createQueryBuilder('user')
+      .select([
+        'user.id',
+        'user.name',
+        'user.biography',
+        'user.area',
+        'user.photo',
+      ]);
+
+    if (searchUserDto.name) {
+      query.andWhere('user.name ILIKE :name', {
+        name: `%${searchUserDto.name}%`,
+      });
+    }
+
+    if (searchUserDto.area) {
+      query.andWhere('user.area = :area', {
+        area: searchUserDto.area,
+      });
+    }
+
+    if (searchUserDto.programmingLanguage) {
+      query.andWhere('user.programmingLanguages ILIKE :programmingLanguages', {
+        programmingLanguages: `%${searchUserDto.programmingLanguage}%`,
+      });
+    }
+
+    if (searchUserDto.softwares) {
+      query.andWhere("(user.softwares->'softwares')::jsonb ? ':softwares'", {
+        softwares: searchUserDto.softwares,
+      });
+    }
+
+    const users = await query.getMany();
 
     return users;
   }
