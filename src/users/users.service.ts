@@ -100,4 +100,24 @@ export class UsersService {
   remove(id: number) {
     return `This action removes a #${id} user`;
   }
+
+  async upload(id: number, file: Express.Multer.File) {
+    const user = await this.findOne(id);
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+    }
+
+    delete user.password;
+
+    let filePath = file.path;
+    filePath = filePath.replace(/uploads\\/, '');
+
+    await this.usersRepository
+      .update(user.id, { photo: filePath })
+      .catch((error) => {
+        throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      });
+
+    return Object.assign(user, { photo: filePath });
+  }
 }
