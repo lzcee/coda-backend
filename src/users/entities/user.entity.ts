@@ -36,10 +36,10 @@ export class User extends BaseEntity {
   @Column({ nullable: true })
   area?: string;
 
-  @Column('text', { nullable: true, array: true })
+  @Column('text', { nullable: true, array: true, default: [] })
   programmingLanguages?: string[];
 
-  @Column('text', { nullable: true, array: true })
+  @Column('text', { nullable: true, array: true, default: [] })
   softwares?: string[];
 
   @BeforeInsert()

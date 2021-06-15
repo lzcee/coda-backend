@@ -40,7 +40,7 @@ export class UsersService {
       ]);
 
     if (searchUserDto.name) {
-      query.andWhere('user.name ILIKE :name', {
+      query.andWhere('LOWER(user.name) ILIKE LOWER(:name)', {
         name: `%${searchUserDto.name}%`,
       });
     }
@@ -52,13 +52,13 @@ export class UsersService {
     }
 
     if (searchUserDto.programmingLanguage) {
-      query.andWhere('user.programmingLanguages ILIKE :programmingLanguages', {
-        programmingLanguages: `%${searchUserDto.programmingLanguage}%`,
+      query.andWhere(':programmingLanguages = ANY(user.programmingLanguages)', {
+        programmingLanguages: searchUserDto.programmingLanguage,
       });
     }
 
     if (searchUserDto.softwares) {
-      query.andWhere("(user.softwares->'softwares')::jsonb ? ':softwares'", {
+      query.andWhere(':softwares = ANY(user.softwares)', {
         softwares: searchUserDto.softwares,
       });
     }
